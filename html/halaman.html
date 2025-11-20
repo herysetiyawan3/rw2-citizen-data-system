@@ -1,0 +1,209 @@
+<script>
+    // Fungsi untuk menampilkan modal
+function showModal() {
+    document.getElementById('myModal').style.display = 'block';
+}
+
+// Fungsi untuk menutup modal
+function closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+}
+
+// Fungsi untuk pindah keluarga
+function pindahKeluarga() {
+    window.location.href = "biodata.html";
+}
+
+// Fungsi untuk pindah mandiri
+function pindahMandiri() {
+    window.location.href = "biodata1.html";
+}
+
+// Klik di luar modal untuk menutup
+window.onclick = function (event) {
+    if (event.target == document.getElementById('myModal')) {
+        closeModal();
+    }
+};
+
+window.onload = function () {
+    const tableBody = document.getElementById('data-table-body');
+    const paginationContainer = document.createElement('div');
+    paginationContainer.id = 'pagination-container';
+    document.querySelector('.data-container').appendChild(paginationContainer);
+
+    // Data tabel
+    let tableData = [];
+
+    // Ambil data dari sessionStorage
+    const storedData = JSON.parse(sessionStorage.getItem('tableData')) || [];
+    console.log("Data dari sessionStorage:", storedData); // Debugging: pastikan data ada
+    tableData = storedData;
+
+    // Jika sessionStorage kosong, tambahkan data awal
+    if (tableData.length === 0) {
+        const noKK = sessionStorage.getItem('no_kk');
+        const nik = sessionStorage.getItem('nik');
+        const namaLengkap = sessionStorage.getItem('nama_lengkap');
+        const jenisKelamin = sessionStorage.getItem('status_perpindahan');
+        const alamat = sessionStorage.getItem('alamat');
+        const agama = sessionStorage.getItem('agama');
+        const pendidikan = sessionStorage.getItem('pendidikan');
+        const jumlahAnggota = sessionStorage.getItem('jumlah_anggota');
+        const tanggalLahir = sessionStorage.getItem('tanggal_lahir');
+
+        if (noKK && nik && namaLengkap && jenisKelamin && alamat && agama && jumlahAnggota && tanggalLahir) {
+            tableData.push({
+                nik: nik,
+                nama: namaLengkap,
+                jenisKelamin: jenisKelamin,
+                alamat: alamat,
+                agama: agama,
+                pendidikan: pendidikan || "-",
+                jumlahAnggota: jumlahAnggota || "0",
+                tanggalLahir: tanggalLahir,
+                status: 'Aktif',
+                hidden: false,
+            });
+        }
+
+        // Tambahkan data dummy
+        const dummyData = Array.from({ length: 15 }, (_, index) => {
+            const jenisKelamin = index % 2 === 0 ? 'Pindah Mandiri' : 'Pindah Keluarga';
+            return {
+                nik: `12345678901234${index + 1}`,
+                nama: `Dummy Name ${index + 1}`,
+                jenisKelamin: jenisKelamin,
+                alamat: `Jl. Contoh No. ${index + 1}`,
+                agama: index % 2 === 0 ? 'Islam' : 'Kristen',
+                pendidikan: index % 3 === 0 ? 'Pendidikan' : 'Pekerjaan',
+                jumlahAnggota: jenisKelamin === 'Pindah Mandiri' ? 0 : Math.floor(Math.random() * 5) + 2,
+                tanggalLahir: '1990-01-01',
+                status: 'Aktif',
+                hidden: false,
+            };
+        });
+
+        tableData = tableData.concat(dummyData);
+        sessionStorage.setItem('tableData', JSON.stringify(tableData)); // Simpan data awal ke sessionStorage
+    }
+
+    // Pagination settings
+    const rowsPerPage = 10;
+    let currentPage = 1;
+
+    function displayTableData(page = 1) {
+        tableBody.innerHTML = ''; // Kosongkan tabel
+        const visibleData = tableData.filter(data => !data.hidden); // Hanya data yang tidak tersembunyi
+        console.log("Data yang ditampilkan:", visibleData); // Debugging: cek data yang akan ditampilkan
+
+        const startIndex = (page - 1) * rowsPerPage;
+        const endIndex = Math.min(startIndex + rowsPerPage, visibleData.length);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            const row = document.createElement('tr');
+            const data = visibleData[i];
+
+            row.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${data.nik}</td>
+                <td>${data.nama}</td>
+                <td>${data.jenisKelamin}</td>
+                <td>${data.alamat}</td>
+                <td>${data.agama}</td>
+                <td>${data.pendidikan}</td>
+                <td>${data.jumlahAnggota}</td>
+                <td>${data.tanggalLahir}</td>
+                <td><span class="status" id="status-${data.nik}">${data.status}</span></td>
+                <td>
+                    <button class="edit-btn" onclick="editData('${data.nik}')"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="delete-btn" onclick="disableData('${data.nik}')"><i class="fas fa-ban"></i> Nonaktif</button>
+                    <button class="activate-btn" onclick="activateData('${data.nik}')"><i class="fas fa-check-circle"></i> Aktifkan</button>
+                    <button class="delete-btn" onclick="deleteData('${data.nik}')"><i class="fas fa-trash"></i> Delete</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        }
+
+        updatePagination(visibleData);
+    }
+
+    function updatePagination(visibleData = tableData.filter(data => !data.hidden)) {
+        paginationContainer.innerHTML = ''; // Kosongkan pagination
+
+        const totalPages = Math.ceil(visibleData.length / rowsPerPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.className = i === currentPage ? 'active' : '';
+            pageButton.onclick = function () {
+                currentPage = i;
+                displayTableData(currentPage);
+            };
+            paginationContainer.appendChild(pageButton);
+        }
+    }
+
+    // Tampilkan halaman pertama
+    displayTableData(currentPage);
+
+    // Fungsi pencarian
+    document.getElementById('search-input').addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        tableData.forEach((data, index) => {
+            const row = tableBody.rows[index];
+            if (data.nik.toLowerCase().includes(searchValue) || data.nama.toLowerCase().includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Fungsi untuk mengedit data
+    window.editData = function (nik) {
+        window.location.href = `output2.html?nik=${nik}`;
+    };
+
+    // Fungsi untuk menonaktifkan data
+    window.disableData = function (nik) {
+        const confirmNonaktif = confirm(`Apakah Anda yakin ingin menonaktifkan data dengan NIK: ${nik}?`);
+        if (confirmNonaktif) {
+            const data = tableData.find(item => item.nik === nik);
+            if (data) {
+                data.status = 'Nonaktif';
+                sessionStorage.setItem('tableData', JSON.stringify(tableData));
+                displayTableData(currentPage);
+            }
+        }
+    };
+
+    // Fungsi untuk mengaktifkan data
+    window.activateData = function (nik) {
+        const confirmAktif = confirm(`Apakah Anda yakin ingin mengaktifkan data dengan NIK: ${nik}?`);
+        if (confirmAktif) {
+            const data = tableData.find(item => item.nik === nik);
+            if (data) {
+                data.status = 'Aktif';
+                sessionStorage.setItem('tableData', JSON.stringify(tableData));
+                displayTableData(currentPage);
+            }
+        }
+    };
+
+    // Fungsi untuk menghapus data
+    window.deleteData = function (nik) {
+        const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data dengan NIK: ${nik}?`);
+        if (confirmDelete) {
+            const data = tableData.find(item => item.nik === nik);
+            if (data) {
+                data.hidden = true; // Tandai data sebagai tersembunyi
+                sessionStorage.setItem('tableData', JSON.stringify(tableData));
+                displayTableData(currentPage); // Perbarui tabel
+            }
+        }
+    };
+};
+
+</script>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Akhir</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            text-decoration: underline;
+        }
+        .data-item {
+            margin: 10px 0;
+        }
+        img {
+            max-width: 200px;
+            margin-top: 10px;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hasil Akhir</h1>
+
+    <div class="section">
+        <h2>Biodata</h2>
+        <div class="data-item">No. KK: <span id="no_kk"></span></div>
+        <div class="data-item">NIK: <span id="nik"></span></div>
+        <div class="data-item">Nama Lengkap: <span id="nama_lengkap"></span></div>
+        <div class="data-item">Tempat Lahir: <span id="tempat_lahir"></span></div>
+        <div class="data-item">Tanggal Lahir: <span id="tanggal_lahir"></span></div>
+        <div class="data-item">Jenis Kelamin: <span id="jenis_kelamin"></span></div>
+        <div class="data-item">No. HP: <span id="no_hp"></span></div>
+        <div class="data-item">Agama: <span id="agama"></span></div>
+        <div class="data-item">Status Perkawinan: <span id="status_perkawinan"></span></div>
+        <div class="data-item">Status Keluarga: <span id="status_keluarga"></span></div>
+        <div class="data-item">Pendidikan: <span id="pendidikan"></span></div>
+        <div class="data-item">Pekerjaan: <span id="pekerjaan"></span></div>
+    </div>
+
+    <div class="section">
+        <h2>Alamat</h2>
+        <div class="data-item">Alamat Lengkap: <span id="alamat_lengkap"></span></div>
+        <div class="data-item">Provinsi: <span id="provinsi"></span></div>
+        <div class="data-item">Kabupaten: <span id="kabupaten"></span></div>
+        <div class="data-item">Kecamatan: <span id="kecamatan"></span></div>
+        <div class="data-item">Desa: <span id="desa"></span></div>
+    </div>
+
+    <div class="section">
+        <img id="ktp-preview-output" src="" style="max-width: 200px;">
+        <img id="kk-preview-output" src="" style="max-width: 200px;">
+        <img id="house-preview-output" src="" style="max-width: 200px;">
+    </div>
+
+    <!-- Tombol untuk menuju halaman output2.html -->
+    <button onclick="window.location.href='output2.html'">Ke Halaman Output 2</button>
+
+    <script>
+        // Mengambil data biodata dari sessionStorage
+        document.getElementById('no_kk').textContent = sessionStorage.getItem('no_kk');
+        document.getElementById('nik').textContent = sessionStorage.getItem('nik');
+        document.getElementById('nama_lengkap').textContent = sessionStorage.getItem('nama_lengkap');
+        document.getElementById('tempat_lahir').textContent = sessionStorage.getItem('tempat_lahir');
+        document.getElementById('tanggal_lahir').textContent = sessionStorage.getItem('tanggal_lahir');
+        document.getElementById('jenis_kelamin').textContent = sessionStorage.getItem('jenis_kelamin');
+        document.getElementById('no_hp').textContent = sessionStorage.getItem('no_hp');
+        document.getElementById('agama').textContent = sessionStorage.getItem('agama');
+        document.getElementById('status_perkawinan').textContent = sessionStorage.getItem('status_perkawinan');
+        document.getElementById('status_keluarga').textContent = sessionStorage.getItem('status_keluarga');
+        document.getElementById('pendidikan').textContent = sessionStorage.getItem('pendidikan');
+        document.getElementById('pekerjaan').textContent = sessionStorage.getItem('pekerjaan');
+    
+        // Mengambil data alamat dari sessionStorage
+        document.getElementById('alamat_lengkap').textContent = sessionStorage.getItem('alamat_lengkap');
+        document.getElementById('provinsi').textContent = sessionStorage.getItem('provinsi');
+        document.getElementById('kabupaten').textContent = sessionStorage.getItem('kabupaten');
+        document.getElementById('kecamatan').textContent = sessionStorage.getItem('kecamatan');
+        document.getElementById('desa').textContent = sessionStorage.getItem('desa');
+    
+        // Mengambil data dokumen pendukung (gambar) dari sessionStorage
+        var ktpFile = sessionStorage.getItem('ktp');
+        var kkFile = sessionStorage.getItem('kk');
+        var houseFile = sessionStorage.getItem('house');
+    
+        window.onload = function() {
+            // Ambil gambar dari sessionStorage dan tampilkan di halaman output.html
+            var ktpImg = sessionStorage.getItem('ktp-preview-img');
+            var kkImg = sessionStorage.getItem('kk-preview-img');
+            var houseImg = sessionStorage.getItem('house-preview-img');
+    
+            if (ktpImg) {
+                document.getElementById('ktp-preview-output').src = ktpImg;
+            }
+            if (kkImg) {
+                document.getElementById('kk-preview-output').src = kkImg;
+            }
+            if (houseImg) {
+                document.getElementById('house-preview-output').src = houseImg;
+            }
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiRW (Sistem Informasi Rukun Warga)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+        .sidebar {
+    width: 250px;
+    background-color: #e0f0ff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh; /* Memastikan sidebar penuh vertikal */
+}
+
+        .sidebar img {
+            width: 50px;
+            height: 50px;
+        }
+        .sidebar h2 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .sidebar h3 {
+            font-size: 18px;
+            margin: 20px 0 10px;
+            color: #888;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+        .sidebar ul li a.active {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .header {
+            background-color: #d9d9d9;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header h1 {
+            font-size: 15px;
+            margin: 0;
+        }
+        .header .menu-icon {
+            font-size: 24px;
+        }
+        .main-content {
+            background-color: #e0f0ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .main-content h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .steps .step {
+            flex: 1;
+            text-align: center;
+        }
+        .steps .step i {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+        .steps .step.active i {
+            background-color: #4da6ff;
+            border-radius: 50%;
+            padding: 15px;
+        }
+        .steps .step span {
+            display: block;
+            font-size: 16px;
+        }
+        .form-group {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            width: 13%;  /* Lebar label */
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;  /* Menyelaraskan label ke kiri */
+            padding-right: 10px;
+            padding-left: 180px;
+        }
+        .form-group input, .form-group select {
+            width: 65%;  /* Lebar input */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-group .date-picker {
+            display: flex;
+            align-items: center;
+        }
+        .form-group .date-picker input {
+            flex: 1;
+        }
+        .form-group .date-picker i {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .form-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px; /* Ensures buttons are pushed to the bottom of the form */
+        }
+        .form-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 150px; /* Ensures buttons are the same size */
+        }
+        .form-buttons .btn-back {
+            background-color: #ff4d4d;
+            color: #fff;
+        }
+        .form-buttons .btn-next {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .form-buttons .btn-next:hover {
+            background-color: #218838;
+        }
+        .radio-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-group input[type="radio"] {
+            margin: 0; /* Menghapus margin antara radio button */
+            padding: 0; /* Menghapus padding dari radio button */
+        }
+
+        .radio-group label {
+            margin-right: 10px; /* Menambahkan jarak sedikit antar label */
+            font-size: 14px; /* Ukuran font label */
+            cursor: pointer; /* Memberikan indikasi jika label bisa diklik */
+            padding: 0; /* Menghapus padding pada label */
+        }
+
+
+
+
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .form-container {
+                padding: 10px;
+            }
+            .form-buttons button {
+                font-size: 14px;
+            }
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .input-error {
+            border-color: red;
+        }
+
+        /* Menambahkan style untuk pesan peringatan form tidak lengkap */
+        .form-error {
+            color: red;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        /* Mengimpor font dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+/* Styling untuk header */
+.header {
+    background: linear-gradient(45deg, #FF6F61, #FFB6C1, #FDCB82, #F49AC2, #FF8C94); /* Efek gradient bergerak */
+    background-size: 400% 400%; /* Efek gradient yang lebih besar */
+    animation: gradientAnimation 10s ease infinite; /* Animasi gradien bergerak */
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Animasi untuk latar belakang gradient */
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Styling untuk h1 di dalam header */
+.header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 35px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+    animation: textAnimation 2s ease forwards; /* Animasi teks muncul */
+}
+
+/* Animasi teks */
+@keyframes textAnimation {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Efek hover pada ikon dan teks */
+.header:hover .header-icon {
+    transform: rotate(360deg); /* Memutar ikon */
+}
+
+.header:hover h1 {
+    color: #FFFBF0; /* Warna teks berubah saat hover */
+    transform: scale(1.05); /* Teks sedikit membesar */
+    transition: transform 0.3s ease, color 0.3s ease; /* Transisi mulus */
+}
+
+/* Styling responsif untuk header */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 36px; /* Ukuran font lebih kecil di layar kecil */
+    }
+
+
+}
+.form-groupp {
+    display: none; /* Menyembunyikan semua elemen dengan class form-group */
+}
+    </style>
+</head>
+<body>
+        <!-- Header -->
+        <div class="header">
+            <h1>Sistem Informasi Rukun Warga</h1>
+        </div>
+    <!-- Sidebar -->
+    <div class="container">
+        <div class="sidebar">
+            <div class="admin-section">
+                <img alt="Admin Icon" height="50" src="https://storage.googleapis.com/a1aa/image/QbRvk1hbRfUzEq52sRqyXRWMFge5QZsdCYhtByAPYNkRJx2TA.jpg" width="50"/>
+                <h2>Admin</h2>
+            </div>
+            <h3>MAIN</h3>
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a class="active" href="#">
+                        <i class="fas fa-user"></i>
+                        Data Penduduk
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-file-alt"></i>
+                        Surat Surat
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-comment"></i>
+                        Saran
+                    </a>
+                </li>
+            </ul>
+            <h3>KELUAR</h3>
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Keluar
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="main-content">
+                <h2>Form Data Penduduk</h2>
+                <div class="steps">
+                    <div class="step active"> <!-- Pindahkan kelas active ke sini -->
+                        <i class="fas fa-user"></i>
+                        <span>Biodata</span>
+                    </div>
+                    <div class="step">
+                        <i class="fas fa-home"></i>
+                        <span>Alamat</span>
+                    </div>
+                    <div class="step">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Dokumen Pendukung</span>
+                    </div>
+                </div>
+    
+                <form id="form-penduduk">
+                    <!-- Form Fields -->
+                    <div class="form-group">
+                        <label for="no_kk">No. Kartu Keluarga</label>
+                        <input id="no_kk" name="no_kk" placeholder="No. Kartu Keluarga" type="text" maxlength="16" pattern="\d{16}" title="No. Kartu Keluarga harus terdiri dari 16 digit angka" required />
+                        <div id="kk-error" class="error-message"></div> <!-- Peringatan No. KK -->
+                    </div>
+                    <div class="form-group">
+                        <label for="nik">NIK</label>
+                        <input id="nik" name="nik" placeholder="NIK" type="text" maxlength="16" pattern="\d{16}" title="NIK harus terdiri dari 16 digit angka" required />
+                        <div id="nik-error" class="error-message"></div> <!-- Peringatan NIK -->
+                    </div>
+    
+
+    
+                    <div class="form-group">
+                        <label for="nama_lengkap">Nama Lengkap</label>
+                        <input id="nama_lengkap" name="nama_lengkap" placeholder="Nama Lengkap" type="text" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal_lahir">Tanggal Pindah</label>
+                        <div class="date-picker">
+                            <input id="tanggal_lahir" name="tanggal_lahir" placeholder="Pilih Tanggal" type="date" required />
+                            <i class="fas fa-calendar-alt" onclick="document.getElementById('tanggal_lahir').showPicker();"></i>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label>Jenis Kelamin</label>
+                        <div class="radio-group">
+                            <input id="male" name="jenis_kelamin" type="radio" value="Laki-Laki" required />
+                            <label for="male">Laki-Laki</label>
+    
+                            <input id="female" name="jenis_kelamin" type="radio" value="Perempuan" required />
+                            <label for="female">Perempuan</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="no_hp">No. HP</label>
+                        <input id="no_hp" name="no_hp" placeholder="No. HP" maxlength="13"  type="text" required />
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="agama">Agama</label>
+                        <select id="agama" name="agama" required>
+                            <option value="kristen" selected>Islam</option>
+                            <option value="hindu">Kristen</option>
+                            <option value="hindu">Hindu</option>
+                            <option value="hindu">Katolik</option>
+                            <option value="hindu">Konghucu</option>
+                            <option value="budha">Buddha</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    
+    
+                    <div class="form-group">
+                        <label for="status_perkawinan">Waktu Perpindahan</label>
+                        <select id="status_perkawinan" name="status_perkawinan" required>
+                            <option value="Pindah sementara" selected>Pindah sementara</option>
+                            <option value="Pindah Permanen">Pindah Permanen</option>
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="status_keluarga">Status Dalam Keluarga</label>
+                        <select id="status_keluarga" name="status_keluarga" required>
+                            <option value="kepala_keluarga" selected>Kepala Keluarga</option>
+                            <option value="istri">Istri</option>
+                            <option value="anak">Anak</option>
+                            <option value="orang_tua">Orang Tua</option>
+                            <option value="orang_tua">Saudara</option>
+                        </select>
+                    </div>
+                    <div class="form-groupp">
+                        <select id="status_perpindahan" name="status_keluarga" required>
+                            <option value="Pindah Mandiri" selected>Pindah Keluarga</option>
+                        </select>
+                    </div>
+
+                    <div class="form-groupp">
+                        <input id="jumlah_anggota" name="jumlah_anggota" placeholder="Jumlah Anggota Keluarga" 
+                               type="number" value="0" readonly />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pendidikan">Alasan Kepindahan</label>
+                        <select id="pendidikan" name="pendidikan" required>
+                            <option value="pekerjaan" selected>Pekerjaan</option>
+                            <option value="pendidikan">Pendidikan</option>
+                            <option value="keluarga">Keluarga</option>
+                            <option value="kesehatan">Kesehatan</option>
+                            <option value="keamanan">Keamanan atau Bencana Alam</option>
+                            <option value="lingkungan">Lingkungan atau Kualitas Hidup</option>
+                            <option value="keagamaan">pendidikan Keagamaan</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="pekerjaan">Pekerjaan</label>
+                        <input id="pekerjaan" name="pekerjaan" placeholder="Pekerjaan" type="text" required />
+                    </div>
+                    <!-- Tambahkan input alamat di bawah pekerjaan -->
+                    <div class="form-group">
+                        <label for="alamat">Alamat Tinggal</label>
+                        <input id="alamat" name="alamat" placeholder="Alamat lengkap" required>
+                    </div>
+    
+                    
+    
+                <div class="form-buttons">
+                    <button type="button" class="btn-back" onclick="window.location.href='output1.html'">Kembali</button>
+
+                    <!-- <button type="button" id="form-next">Selanjutnya</button> -->
+                    <button type="button" id="form-next" class="btn-next" disabled>Selanjutnya</button>
+                </div>
+
+                <!-- Peringatan jika ada data yang belum lengkap -->
+                <div id="form-error" class="form-error"></div>
+                </form>
+            </div>
+        </div>
+    
+        <script>
+// Fungsi untuk memeriksa apakah form sudah valid
+function validateForm() {
+    var nik = document.getElementById("nik").value;
+    var no_kk = document.getElementById("no_kk").value;
+    var alamat = document.getElementById("alamat").value; // Ambil alamat
+    var form = document.getElementById("form-penduduk");
+    var btnNext = document.getElementById("form-next");
+    var isValid = true;
+
+    // Reset pesan error dan style error sebelumnya
+    document.getElementById("nik-error").textContent = "";
+    document.getElementById("kk-error").textContent = "";
+    document.getElementById("nik").classList.remove("input-error");
+    document.getElementById("no_kk").classList.remove("input-error");
+    document.getElementById("alamat").classList.remove("input-error"); // Tambahkan kelas error jika diperlukan
+    document.getElementById("form-error").textContent = ""; // Reset pesan error global
+
+    // Validasi NIK
+    if (nik.length !== 16 || !/^\d{16}$/.test(nik)) {
+        document.getElementById("nik-error").textContent = "NIK harus terdiri dari 16 digit angka.";
+        document.getElementById("nik").classList.add("input-error");
+        isValid = false;
+    }
+
+    // Validasi No. Kartu Keluarga
+    if (no_kk.length !== 16 || !/^\d{16}$/.test(no_kk)) {
+        document.getElementById("kk-error").textContent = "No. Kartu Keluarga harus terdiri dari 16 digit angka.";
+        document.getElementById("no_kk").classList.add("input-error");
+        isValid = false;
+    }
+
+    // Validasi alamat
+    if (!alamat.trim()) {
+        document.getElementById("form-error").textContent = "Alamat harus diisi!";
+        document.getElementById("alamat").classList.add("input-error");
+        isValid = false;
+    }
+
+    // Validasi form lainnya
+    if (!form.checkValidity()) {
+        isValid = false;
+    }
+
+    // Menampilkan peringatan jika form belum lengkap
+    if (!isValid) {
+        document.getElementById("form-error").textContent = "Harap lengkapi semua data dengan benar!";
+    } else {
+        document.getElementById("form-error").textContent = ""; // Reset pesan error jika form valid
+    }
+
+    // Aktifkan tombol "Selanjutnya" jika form valid, sebaliknya nonaktifkan
+    btnNext.disabled = !isValid;
+}
+
+// Menambahkan event listener untuk memeriksa validasi saat pengguna mengetik
+document.getElementById("nik").addEventListener("input", validateForm);
+document.getElementById("no_kk").addEventListener("input", validateForm);
+document.getElementById("alamat").addEventListener("input", validateForm); // Periksa alamat juga
+document.getElementById("form-penduduk").addEventListener("input", validateForm);
+
+// Event listener untuk memeriksa input pada kolom no_hp (hanya angka)
+document.getElementById('no_hp').addEventListener('input', function () {
+    // Hanya biarkan angka yang dapat dimasukkan
+    this.value = this.value.replace(/[^0-9]/g, ''); // Menghapus karakter selain angka
+    validateForm(); // Memeriksa validasi saat input berubah
+});
+
+// Event listener untuk memeriksa input pada kolom nama_lengkap (hanya huruf dan spasi)
+document.getElementById('nama_lengkap').addEventListener('input', function () {
+    // Hanya biarkan huruf dan spasi yang dapat dimasukkan
+    this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); // Menghapus karakter selain huruf dan spasi
+    validateForm(); // Memeriksa validasi saat input berubah
+});
+
+// Fungsi untuk menangani pengiriman form ketika tombol "Selanjutnya" diklik
+document.getElementById("form-next").addEventListener('click', function() {
+    // Validasi form menggunakan fungsi validateForm()
+    validateForm();
+
+    // Jika form valid (btn-next tidak disabled)
+    if (!document.getElementById("form-next").disabled) {
+        // Ambil data form
+        var nik = document.getElementById("nik").value;
+        var no_kk = document.getElementById("no_kk").value;
+        var nama_lengkap = document.getElementById("nama_lengkap").value;
+        var tanggal_lahir = document.getElementById("tanggal_lahir").value;
+        var jenis_kelamin = document.querySelector('input[name="jenis_kelamin"]:checked');
+        var no_hp = document.getElementById("no_hp").value;
+        var agama = document.getElementById("agama").value;
+        var status_perkawinan = document.getElementById("status_perkawinan").value;
+        var status_keluarga = document.getElementById("status_keluarga").value;
+        var status_perpindahan = document.getElementById("status_perpindahan").value;
+        var pendidikan = document.getElementById("pendidikan").value;
+        var pekerjaan = document.getElementById("pekerjaan").value;
+        var alamat = document.getElementById("alamat").value;
+        var jumlah_anggota = document.getElementById("jumlah_anggota").value; // Data baru: Kode Pos
+
+        // Simpan data ke sessionStorage
+        sessionStorage.setItem('nik', nik);
+        sessionStorage.setItem('no_kk', no_kk);
+        sessionStorage.setItem('nama_lengkap', nama_lengkap);
+        sessionStorage.setItem('tanggal_lahir', tanggal_lahir);
+        sessionStorage.setItem('jenis_kelamin', jenis_kelamin ? jenis_kelamin.value : '');
+        sessionStorage.setItem('no_hp', no_hp);
+        sessionStorage.setItem('agama', agama);
+        sessionStorage.setItem('status_perkawinan', status_perkawinan);
+        sessionStorage.setItem('status_keluarga', status_keluarga);
+        sessionStorage.setItem('status_perpindahan', status_perpindahan);
+        sessionStorage.setItem('pendidikan', pendidikan);
+        sessionStorage.setItem('pekerjaan', pekerjaan);
+        sessionStorage.setItem('alamat', alamat); // Menyimpan alamat
+        sessionStorage.setItem('jumlah_anggota', jumlah_anggota); // Simpan Kode Pos
+
+        // Pindah ke halaman berikutnya
+        window.location.href = "alamatmm.html"; // Ganti dengan URL tujuan halaman berikutnya
+    } else {
+        // Jika ada yang belum valid, tampilkan peringatan
+        alert("Harap isi semua data dengan benar dan lengkap.");
+    }
+});
+
+
+
+</script>
+
+    
+    
+
+</body>
+</html>

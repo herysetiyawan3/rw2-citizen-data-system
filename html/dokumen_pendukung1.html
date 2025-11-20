@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiRW (Sistem Informasi Rukun Warga)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+        .sidebar {
+    width: 250px;
+    background-color: #e0f0ff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh; /* Memastikan sidebar penuh vertikal */
+}
+        .sidebar img {
+            width: 50px;
+            height: 50px;
+        }
+        .sidebar h2 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .sidebar h3 {
+            font-size: 18px;
+            margin: 20px 0 10px;
+            color: #888;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+        .sidebar ul li a.active {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .header {
+            background-color: #d9d9d9;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header h1 {
+            font-size: 15px;
+            margin: 0;
+        }
+        .header .menu-icon {
+            font-size: 24px;
+        }
+        .form-container {
+            background-color: #e6f2ff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            margin-top: 80px;
+        }
+        .header-form {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+        .step i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .step.active i {
+            color: #000000;
+            background-color: #4da6ff;
+            border-radius: 50%;
+            padding: 10px;
+        }
+        .step.active {
+            color: #000000;
+        }
+        .upload-section {
+            margin-bottom: 20px;
+        }
+        .upload-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .upload-box {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+    display: flex; /* Gunakan flexbox */
+    flex-direction: column; /* Atur elemen secara vertikal */
+    justify-content: center; /* Pusatkan konten secara vertikal */
+    align-items: center; /* Pusatkan konten secara horizontal */
+    min-height: 100px; /* Menjaga tinggi minimal box */
+}
+
+.upload-box i {
+    font-size: 24px;
+    color: #ccc;
+}
+
+.upload-box p {
+    text-align: center;
+    margin: 0; /* Reset margin default */
+    line-height: 1.5; /* Mengatur jarak antar baris */
+}
+
+.upload-box a {
+    color: #4da6ff;
+    text-decoration: none;
+}
+
+.upload-box.drag-over {
+    border-color: #4da6ff;
+    background-color: #e6f2ff;
+}
+
+.upload-box img {
+    display: block;
+    margin-top: 10px;
+    max-width: 100px;
+    height: auto;
+    cursor: pointer;
+}
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .buttons button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .buttons .back {
+            background-color: #ff4d4d;
+            color: #fff;
+        }
+        .buttons .save {
+            background-color: #33cc33;
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .steps {
+                flex-direction: column;
+            }
+            .buttons button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+        .image-options button {
+    background-color: #4da6ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.image-options button:hover {
+    background-color: #006bb3;
+}
+
+/* Menonaktifkan pointer-events di semua elemen dalam modal, kecuali gambar */
+.image-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    pointer-events: all; /* Memastikan modal menangani klik */
+    z-index: 9999; /* Menambahkan z-index agar modal berada di atas elemen lainnya */
+}
+
+.image-modal * {
+    pointer-events: none; /* Menonaktifkan pointer events di semua elemen dalam modal */
+}
+
+.image-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    pointer-events: all; /* Modal menangani semua klik */
+    z-index: 9999; /* Modal selalu berada di atas elemen lainnya */
+}
+
+.image-modal img {
+    pointer-events: auto; /* Gambar dapat menerima klik */
+    cursor: zoom-out; /* Menunjukkan bahwa gambar bisa di-zoom-out */
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.upload-section {
+    position: relative;
+    z-index: 1; /* Upload berada di bawah modal */
+}
+/* Mengimpor font dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+/* Styling untuk header */
+.header {
+    background: linear-gradient(45deg, #FF6F61, #FFB6C1, #FDCB82, #F49AC2, #FF8C94); /* Efek gradient bergerak */
+    background-size: 400% 400%; /* Efek gradient yang lebih besar */
+    animation: gradientAnimation 10s ease infinite; /* Animasi gradien bergerak */
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Animasi untuk latar belakang gradient */
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Styling untuk h1 di dalam header */
+.header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 35px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+    animation: textAnimation 2s ease forwards; /* Animasi teks muncul */
+}
+
+/* Animasi teks */
+@keyframes textAnimation {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Efek hover pada ikon dan teks */
+.header:hover .header-icon {
+    transform: rotate(360deg); /* Memutar ikon */
+}
+
+.header:hover h1 {
+    color: #FFFBF0; /* Warna teks berubah saat hover */
+    transform: scale(1.05); /* Teks sedikit membesar */
+    transition: transform 0.3s ease, color 0.3s ease; /* Transisi mulus */
+}
+
+/* Styling responsif untuk header */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 36px; /* Ukuran font lebih kecil di layar kecil */
+    }
+
+
+}
+
+    </style>
+
+
+</head>
+
+
+<body>
+            <!-- Header -->
+            <div class="header">
+                <h1>Sistem Informasi Rukun Warga</h1>
+            </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="admin-section">
+                <img alt="Admin Icon" height="50" src="https://storage.googleapis.com/a1aa/image/QbRvk1hbRfUzEq52sRqyXRWMFge5QZsdCYhtByAPYNkRJx2TA.jpg" width="50"/>
+                <h2>Admin</h2>
+            </div>
+            <h3>MAIN</h3>
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a class="active" href="#">
+                        <i class="fas fa-user"></i>
+                        Data Penduduk
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-file-alt"></i>
+                        Surat Surat
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-comment"></i>
+                        Saran
+                    </a>
+                </li>
+            </ul>
+            <h3>KELUAR</h3>
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Keluar
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="form-container">
+                <div class="header-form">Form Data Penduduk</div>
+                <div class="steps">
+                    <div class="step">
+                        <i class="fas fa-user"></i>
+                        <div>Biodata</div>
+                    </div>
+                    <div class="step">
+                        <i class="fas fa-home"></i>
+                        <div>Alamat</div>
+                    </div>
+                    <div class="step active">
+                        <i class="fas fa-file-alt"></i>
+                        <div>Dokumen Pendukung</div>
+                    </div>
+                </div>
+
+
+
+
+                <!-- Upload Section for KTP -->
+                <div class="upload-section">
+                    <label>Upload Foto Identitas Resmi</label>
+                    <div class="upload-box" 
+                         ondrop="handleDrop(event, 'ktp-upload', 'ktp-preview')" 
+                         ondragover="allowDrop(event)" 
+                         onclick="document.getElementById('ktp-upload').click();">
+                        <i class="fas fa-upload" id="ktp-icon"></i>
+                        <p>
+                            Drop here to attach or <a href="#">upload</a>
+                            <br>
+                            Max size: 5 MB
+                        </p>
+                        <input id="ktp-upload" type="file" accept="image/*" style="display:none;" onchange="handleFileUpload('ktp-upload', 'ktp-preview');">
+                        <img id="ktp-preview" class="preview-img" style="display:none; max-width: 100px; margin-top: 10px;" onclick="openModal('ktp-preview');" />
+                        <div id="ktp-options" class="image-options" style="display:none;">
+                            <button onclick="editImage('ktp-preview')">Edit</button>
+                            <button onclick="deleteImage('ktp-preview')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal for image enlargement -->
+                <div id="image-modal" class="image-modal" onclick="closeModal()">
+                    <img id="modal-image" class="modal-img" />
+                </div>
+                
+                <!-- Upload Section for KK -->
+                <div class="upload-section">
+                    <label>Upload Foto Kartu Keluarga</label>
+                    <div class="upload-box" 
+                         ondrop="handleDrop(event, 'kk-upload', 'kk-preview')" 
+                         ondragover="allowDrop(event)" 
+                         onclick="document.getElementById('kk-upload').click();">
+                        <i class="fas fa-upload"></i>
+                        <p>
+                            Drop here to attach or <a href="#">upload</a>
+                            <br>
+                            Max size: 5 MB
+                        </p>
+                        <input id="kk-upload" type="file" accept="image/*" style="display:none;" onchange="handleFileUpload('kk-upload', 'kk-preview');">
+                        <img id="kk-preview" class="preview-img" style="display:none; max-width: 100px; margin-top: 10px;" onclick="openModal('kk-preview');" />
+                    </div>
+                </div>
+
+                <!-- Upload Section for House -->
+                <div class="upload-section">
+                    <label>Upload Foto Rumah atau  Tempat Tinggal</label>
+                    <div class="upload-box" 
+                         ondrop="handleDrop(event, 'house-upload', 'house-preview')" 
+                         ondragover="allowDrop(event)" 
+                         onclick="document.getElementById('house-upload').click();">
+                        <i class="fas fa-upload"></i>
+                        <p>
+                            Drop here to attach or <a href="#">upload</a>
+                            <br>
+                            Max size: 5 MB
+                        </p>
+                        <input id="house-upload" type="file" accept="image/*" style="display:none;" onchange="handleFileUpload('house-upload', 'house-preview');">
+                        <img id="house-preview" class="preview-img" style="display:none; max-width: 100px; margin-top: 10px;" onclick="openModal('house-preview');" />
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button type="button" class="back" onclick="window.location.href='alamat.html'">Kembali</button>
+
+                    <button class="save" onclick="goNext(event)">Simpan</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        // Fungsi untuk membuka modal gambar
+        function openModal(previewId) {
+            var modal = document.getElementById('image-modal');
+            var modalImage = document.getElementById('modal-image');
+            var previewImage = document.getElementById(previewId);
+
+            modal.style.display = 'flex';
+            modalImage.src = previewImage.src; // Gambar yang ditampilkan di modal adalah gambar preview
+        }
+
+        // Fungsi untuk menutup modal gambar
+        function closeModal() {
+            var modal = document.getElementById('image-modal');
+            modal.style.display = 'none';
+        }
+
+        // Fungsi untuk memungkinkan file di-drop
+        function allowDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+// Maksimal ukuran file dalam bytes (5 MB)
+const MAX_FILE_SIZE = 5 * 1024 * 1024;  // 5 MB dalam bytes
+
+// Fungsi untuk menangani saat file dipilih melalui input file
+function handleFileUpload(inputId, previewId) {
+    var fileInput = document.getElementById(inputId);
+    var filePreview = document.getElementById(previewId);
+    var uploadBox = filePreview.closest('.upload-box');
+    
+    var file = fileInput.files[0];
+    
+    if (file) {
+        // Cek ukuran file
+        if (file.size > MAX_FILE_SIZE) {
+            alert("Ukuran file terlalu besar. Maksimal 5 MB.");
+            fileInput.value = "";  // Reset input file
+            return;
+        }
+
+        if (file.type.startsWith('image/')) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                filePreview.src = e.target.result;
+                filePreview.style.display = "block";  // Tampilkan gambar yang di-upload
+                // Sembunyikan teks dan ikon setelah gambar muncul
+                uploadBox.querySelector('p').style.display = 'none';
+                uploadBox.querySelector('i').style.display = 'none';
+                
+                // Simpan gambar ke sessionStorage (dalam bentuk base64)
+                sessionStorage.setItem(previewId + '-img', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert("Hanya gambar yang diperbolehkan.");
+            fileInput.value = "";  // Reset input file
+        }
+    }
+}
+
+// Fungsi untuk menangani saat file dijatuhkan
+function handleDrop(event, inputId, previewId) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    var file = event.dataTransfer.files[0];  // Ambil file yang diseret
+    if (file) {
+        // Cek ukuran file
+        if (file.size > MAX_FILE_SIZE) {
+            alert("Ukuran file terlalu besar. Maksimal 5 MB.");
+            return;
+        }
+
+        if (file.type.startsWith('image/')) {
+            var fileInput = document.getElementById(inputId);
+            var filePreview = document.getElementById(previewId);
+            var uploadBox = filePreview.closest('.upload-box');
+
+            // Set file input value ke file yang diseret
+            var dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+
+            // Tampilkan gambar preview
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                filePreview.src = e.target.result;
+                filePreview.style.display = "block";  // Tampilkan gambar yang di-upload
+                // Sembunyikan teks dan ikon setelah gambar muncul
+                uploadBox.querySelector('p').style.display = 'none';
+                uploadBox.querySelector('i').style.display = 'none';
+                
+                // Simpan gambar ke sessionStorage (dalam bentuk base64)
+                sessionStorage.setItem(previewId + '-img', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert("Hanya gambar yang diperbolehkan.");
+        }
+    }
+}
+
+// Fungsi untuk menangani gambar yang diklik untuk memperbesar
+document.querySelectorAll('.preview-img').forEach(function(img) {
+    img.addEventListener('click', function(e) {
+        e.stopPropagation(); // Hentikan event agar tidak memicu elemen lain
+        openModal(e.target.id); // Memanggil modal hanya untuk gambar yang diklik
+    });
+});
+
+// Fungsi untuk menutup modal gambar jika gambar diklik
+document.getElementById('image-modal').addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG') {
+        e.stopPropagation(); // Pastikan modal tidak memicu klik lain
+    } else {
+        closeModal();
+    }
+});
+
+// Fungsi untuk mengedit gambar (disesuaikan dengan kebutuhan)
+function editImage(previewId) {
+    alert('Fungsi edit gambar belum diimplementasikan.');
+}
+
+// Fungsi untuk menghapus gambar
+function deleteImage(previewId) {
+    var filePreview = document.getElementById(previewId);
+    var fileInput = document.getElementById(previewId.replace('-preview', '-upload'));
+    var uploadBox = filePreview.closest('.upload-box');
+
+    filePreview.style.display = "none";  // Sembunyikan gambar
+    uploadBox.querySelector('p').style.display = 'block';  // Tampilkan teks upload
+    uploadBox.querySelector('i').style.display = 'block';  // Tampilkan ikon upload
+
+    fileInput.value = "";  // Reset input file
+}
+
+function goNext(event) {
+    event.preventDefault();  // Mencegah form submit jika ada
+
+    // Cek apakah gambar KTP, KK, dan rumah sudah di-upload
+    var ktpPreview = document.getElementById('ktp-preview');
+    var kkPreview = document.getElementById('kk-preview');
+    var housePreview = document.getElementById('house-preview');
+
+    // Jika ada gambar yang belum di-upload, tampilkan peringatan
+    if (!ktpPreview.src || !kkPreview.src || !housePreview.src) {
+        alert("Harap upload semua gambar (KTP, KK, dan Bukti Tempat Tinggal).");
+        return;  // Jangan lanjutkan jika ada yang belum di-upload
+    }
+
+    // Jika semua gambar sudah di-upload dan data sudah lengkap, tampilkan konfirmasi
+    var isConfirmed = confirm("Apakah Anda yakin bahwa semua data yang dimasukkan sudah benar dan lengkap?");
+    
+    if (isConfirmed) {
+        // Simpan gambar ke sessionStorage (dalam bentuk base64)
+        sessionStorage.setItem('ktp-preview-img', ktpPreview.src);
+        sessionStorage.setItem('kk-preview-img', kkPreview.src);
+        sessionStorage.setItem('house-preview-img', housePreview.src);
+
+        // Pindah ke halaman berikutnya (output.html)
+        window.location.href = 'output3.html';
+    } else {
+        alert("Silakan periksa kembali data Anda.");
+    }
+}
+
+
+
+
+
+    </script>
+</body>
+
+</html>

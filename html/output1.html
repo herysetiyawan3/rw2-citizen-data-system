@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiRW (Sistem Informasi Rukun Warga)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+
+        .sidebar {
+    width: 250px;
+    background-color: #e0f0ff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh; /* Memastikan sidebar penuh vertikal */
+}
+
+        .sidebar img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .sidebar h2 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .sidebar h3 {
+            font-size: 18px;
+            margin: 20px 0 10px;
+            color: #888;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+
+        .sidebar ul li a.active {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+/* Mengimpor font dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+/* Styling untuk header */
+.header {
+    background: linear-gradient(45deg, #FF6F61, #FFB6C1, #FDCB82, #F49AC2, #FF8C94); /* Efek gradient bergerak */
+    background-size: 400% 400%; /* Efek gradient yang lebih besar */
+    animation: gradientAnimation 10s ease infinite; /* Animasi gradien bergerak */
+    padding: 15px 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    margin-bottom: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Animasi untuk latar belakang gradient */
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Styling untuk h1 di dalam header */
+.header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 35px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+    animation: textAnimation 2s ease forwards; /* Animasi teks muncul */
+}
+
+/* Animasi teks */
+@keyframes textAnimation {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Efek hover pada ikon dan teks */
+.header:hover .header-icon {
+    transform: rotate(360deg); /* Memutar ikon */
+}
+
+.header:hover h1 {
+    color: #FFFBF0; /* Warna teks berubah saat hover */
+    transform: scale(1.05); /* Teks sedikit membesar */
+    transition: transform 0.3s ease, color 0.3s ease; /* Transisi mulus */
+}
+
+/* Styling responsif untuk header */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 36px; /* Ukuran font lebih kecil di layar kecil */
+    }
+
+
+}
+
+
+
+
+        .header .menu-icon {
+            font-size: 24px;
+        }
+
+        /* Data Penduduk Styling */
+        .data-container {
+            width: 90%;
+            margin: 20px auto;
+            background-color: #e0f0ff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .data-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .data-header i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .data-header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container button {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            margin-right: 8px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-container input {
+            width: 300px;
+            padding: 10px;
+            border: 3px solid #ada6a6;
+            border-radius: 5px;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: #4a6fa5;
+        }
+
+        .search-container .fa-search {
+            margin-left: -30px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            text-align: center; /* Menyelaraskan teks secara horizontal */
+
+        }
+
+        table, th, td {
+            border: 3px solid #201515;
+            vertical-align: middle; /* Menyelaraskan teks secara vertikal */
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center; /* Menyelaraskan teks secara horizontal */
+
+        }
+
+        th {
+            background-color: #47e347;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .pagination span {
+            margin-right: 10px;
+        }
+        #pagination-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#pagination-container button {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#pagination-container button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Styling untuk kolom Aksi */
+table td button {
+    background-color: transparent;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Tombol Edit: Background Biru */
+table td .edit-btn {
+    background-color: #e3f2fd; /* Biru muda */
+    color: #007bff; /* Warna ikon biru */
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+/* Tombol Hapus: Background Merah */
+table td .delete-btn {
+    background-color: #f8d7da; /* Merah muda */
+    color: #dc3545; /* Warna ikon merah */
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+/* Hover effect untuk tombol Edit */
+table td .edit-btn:hover {
+    background-color: #bbdefb; /* Biru gelap saat hover */
+}
+
+/* Hover effect untuk tombol Hapus */
+table td .delete-btn:hover {
+    background-color: #f5c6cb; /* Merah gelap saat hover */
+}
+
+/* Ikon di dalam tombol tetap biru (Edit) atau merah (Hapus) */
+table td .edit-btn i {
+    color: #007bff; /* Ikon Edit berwarna biru */
+}
+
+table td .delete-btn i {
+    color: #dc3545; /* Ikon Hapus berwarna merah */
+}
+
+/* Menambahkan padding dan border pada kolom aksi */
+th:last-child, td:last-child {
+    text-align: center;
+}
+
+table td button i {
+    font-size: 20px; /* Ukuran ikon */
+}
+
+        .pagination button {
+            background-color: #4a6fa5;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+/* Styling untuk kolom Status */
+table td .status {
+    font-weight: bold;
+    color: #28a745; /* Warna hijau untuk status aktif */
+}
+
+table td .status.nonaktif {
+    color: #dc3545; /* Warna merah untuk status nonaktif */
+}
+
+/* Ikon di dalam tombol tetap hijau */
+table td .activate-btn i {
+    color: #28a745; /* Ikon Aktifkan berwarna hijau */
+}
+
+/* Tombol Aktifkan: Background Hijau */
+table td .activate-btn {
+    background-color: #d4edda; /* Hijau muda */
+    color: #28a745; /* Warna ikon hijau */
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+/* Hover effect untuk tombol Aktifkan */
+table td .activate-btn:hover {
+    background-color: #c3e6cb; /* Hijau gelap saat hover */
+}
+
+/* Ikon di dalam tombol tetap hijau */
+table td .activate-btn i {
+    color: #28a745; /* Ikon Aktifkan berwarna hijau */
+}
+
+/* Menambahkan efek pada tombol jika tombol Nonaktif sudah diklik */
+table td .activate-btn {
+    display: none; /* Tombol ini disembunyikan pada awalnya */
+}
+
+/* Modal Style */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 100px; /* Pindahkan modal ke bawah sedikit agar lebih rapi */
+}
+
+/* Modal Content Style */
+.modal-content {
+    background-color: #fefefe;
+    margin: 0 auto; /* Agar modal berada di tengah */
+    padding: 30px;
+    border: 1px solid #888;
+    width: 60%; /* Ukuran modal lebih kecil, dapat diubah sesuai keinginan */
+    max-width: 900px; /* Max-width untuk memastikan modal tidak terlalu besar */
+    text-align: center; /* Teks di dalam modal menjadi rata tengah */
+    border-radius: 10px; /* Membuat sudut modal lebih halus */
+}
+
+/* Close Button Style */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Button Style - Mengubah warna tombol menjadi biru dan memperbesar tombol */
+.modal-button {
+    background-color: #007BFF; /* Warna biru tombol */
+    color: white;
+    padding: 20px 50px; /* Ukuran tombol lebih besar dengan padding yang lebih banyak */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px; /* Ukuran font lebih besar */
+    margin: 15px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%; /* Tombol memenuhi lebar modal */
+    box-sizing: border-box; /* Memastikan padding tidak mengubah ukuran tombol */
+}
+
+.modal-button:hover {
+    background-color: #0056b3; /* Efek hover dengan warna biru lebih gelap */
+}
+/* Membuat container menjadi flex untuk menata tombol secara berdampingan */
+.button-container {
+    display: flex;
+    gap: 10px; /* Jarak antar tombol */
+}
+
+.button-container a {
+    display: inline-block; /* Mengatur agar <a> tetap menjadi elemen blok tetapi di dalam flex container */
+}
+
+a button {
+    background-color: #4a6fa5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+a button i {
+    margin-right: 10px; /* Menambahkan jarak antara ikon dan teks */
+}
+
+a button:hover {
+    background-color: #365f8d;
+}
+
+
+    </style>
+</head>
+
+
+<body>
+        <!-- Header -->
+        <div class="header">
+            <h1>Sistem Informasi Rukun Warga</h1>
+        </div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="admin-section">
+                <img alt="Admin Icon" height="50" src="https://storage.googleapis.com/a1aa/image/QbRvk1hbRfUzEq52sRqyXRWMFge5QZsdCYhtByAPYNkRJx2TA.jpg" width="50"/>
+                <h2>Admin</h2>
+            </div>
+            <h3>MAIN</h3>
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a class="active" href="#">
+                        <i class="fas fa-user"></i>
+                        Data Penduduk
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-file-alt"></i>
+                        Surat Surat
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-comment"></i>
+                        Saran
+                    </a>
+                </li>
+            </ul>
+            <h3>KELUAR</h3>
+            <ul>
+                <li>
+                    <a href="#">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Keluar
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Content (Data Penduduk) -->
+        <div class="content">
+            <div class="data-container">
+                
+                <div class="data-header">
+                    <i class="fas fa-users"></i>
+                    <h1>Rekapitulasi Penduduk Masuk</h1>
+                </div>
+
+                <div class="search-container">
+
+                    <div class="button-container">
+                        <a href="#" onclick="showModal()">
+                            <button><i class="fas fa-plus" style="margin-right: 25px;"></i> perpindahan Masuk</button>
+                        </a>
+                        <a href="#" onclick="showModall()">
+                            <button><i class="fas fa-plus" style="margin-right: 25px;"></i> perpindahan keluar</button>
+                        </a>
+                    </div>
+                    
+                    
+                    <div>
+                        <input type="text" id="search-input" placeholder="Search..." oninput="searchTable()">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h2>Pilih Opsi</h2>
+                        <button class="modal-button" onclick="pindahKeluarga()">Pindah Keluarga</button>
+                        <button class="modal-button" onclick="pindahMandiri()">Pindah Mandiri</button>
+                    </div>
+                </div>
+                <div id="myModall" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModall()">&times;</span>
+                        <h2>Pilih Opsi</h2>
+                        <button class="modal-button" onclick="pindahKeluargaa()">Pindah Keluarga</button>
+                        <button class="modal-button" onclick="pindahMandirii()">Pindah Mandiri</button>
+                    </div>
+                </div>
+                
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NIK</th>
+                            <th>Nama Lengkap</th>
+                            <th>Jenis Pindah</th>
+                            <th>Alamat Tinggal</th>
+                            <th>Agama</th>
+                            <th>Alasan Pindah</th>
+                            <th>Jumlah Anggota</th>
+                            <th>Tanggal Pindah</th> <!-- Kolom Tanggal pendidikan -->
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    
+                    
+                    
+                    <tbody id="data-table-body">
+                        <!-- Data akan ditambahkan di sini dengan JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menampilkan modal
+function showModal() {
+    document.getElementById('myModal').style.display = 'block';
+}
+
+// Fungsi untuk menutup modal
+function closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+}
+
+// Fungsi untuk pindah keluarga
+function pindahKeluarga() {
+    window.location.href = "biodata.html";
+}
+
+// Fungsi untuk pindah mandiri
+function pindahMandiri() {
+    window.location.href = "biodata1.html";
+}
+
+// Klik di luar modal untuk menutup
+window.onclick = function(event) {
+    if (event.target == document.getElementById('myModal')) {
+        closeModal();
+    }
+}
+function showModall() {
+    document.getElementById('myModall').style.display = 'block';
+}
+
+// Fungsi untuk menutup modal
+function closeModall() {
+    document.getElementById('myModall').style.display = 'none';
+}
+
+// Fungsi untuk pindah keluarga
+function pindahKeluargaa() {
+    window.location.href = "biodata3.html";
+}
+
+// Fungsi untuk pindah mandiri
+function pindahMandirii() {
+    window.location.href = "biodata4.html";
+}
+
+// Klik di luar modal untuk menutup
+window.onclick = function(event) {
+    if (event.target == document.getElementById('myModal')) {
+        closeModal();
+    }
+}
+
+
+
+window.onload = function () {
+    const tableBody = document.getElementById('data-table-body');
+    const paginationContainer = document.createElement('div');
+    paginationContainer.id = 'pagination-container';
+    document.querySelector('.data-container').appendChild(paginationContainer);
+
+    // Data tabel (gabungkan data sessionStorage dan dummy)
+    let tableData = [];
+
+    // Ambil data dari sessionStorage
+    const noKK = sessionStorage.getItem('no_kk');
+    const nik = sessionStorage.getItem('nik');
+    const namaLengkap = sessionStorage.getItem('nama_lengkap');
+    const jenisKelamin = sessionStorage.getItem('status_perpindahan');
+    const alamat = sessionStorage.getItem('alamat');
+    const agama = sessionStorage.getItem('agama');
+    const pendidikan = sessionStorage.getItem('pendidikan');
+    const jumlahAnggota = sessionStorage.getItem('jumlah_anggota');
+    const tanggalLahir = sessionStorage.getItem('tanggal_lahir'); 
+
+    if (noKK && nik && namaLengkap && jenisKelamin && alamat && agama && jumlahAnggota && tanggalLahir) {
+    tableData.push({
+        nik: nik,
+        nama: namaLengkap,
+        jenisKelamin: jenisKelamin,
+        alamat: alamat,
+        agama: agama,
+        pendidikan: pendidikan || "-", // Berikan nilai default jika kosong
+        jumlahAnggota: jumlahAnggota || "0", // Pastikan nilai tidak undefined
+        tanggalLahir: tanggalLahir,
+        status: 'Aktif',
+    });
+}
+
+
+// Tambahkan 15 data dummy
+const dummyData = Array.from({ length: 42 }, (_, index) => {
+    const jenisKelamin = index % 2 === 0 ? 'Pindah Mandiri' : 'Pindah Keluarga';
+
+    return {
+        nik: `12345678901234${index + 1}`,
+        nama: `Dummy Name ${index + 1}`,
+        jenisKelamin: jenisKelamin,
+        alamat: `Jl. Contoh No. ${index + 1}`,
+        agama: index % 2 === 0 ? 'Islam' : 'Kristen',
+        pendidikan: index % 3 === 0 ? 'Pendidikan' : 'Pekerjaan',
+        jumlahAnggota: jenisKelamin === 'Pindah Mandiri' 
+            ? 0 
+            : Math.floor(Math.random() * 5) + 2, // Acak antara 2 dan 6
+        tanggalLahir: '1990-01-01', // Tanggal lahir dummy
+        status: 'Aktif',
+    };
+});
+
+
+    // Gabungkan data sessionStorage dan data dummy
+    tableData = tableData.concat(dummyData);
+
+    // Pagination settings
+    const rowsPerPage = 15;
+    let currentPage = 1;
+
+// Fungsi untuk menampilkan data tabel
+function displayTableData(page = 1) {
+    tableBody.innerHTML = ''; // Kosongkan tabel
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, tableData.length);
+
+    for (let i = startIndex; i < endIndex; i++) {
+        const row = document.createElement('tr');
+        const data = tableData[i];
+        
+        // Tambahkan atribut data-nik
+        row.setAttribute('data-nik', data.nik);
+
+        row.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${data.nik}</td>
+            <td>${data.nama}</td>
+            <td>${data.jenisKelamin}</td>
+            <td>${data.alamat}</td>
+            <td>${data.agama}</td>
+            <td>${data.pendidikan}</td>
+            <td>${data.jumlahAnggota}</td>
+            <td>${data.tanggalLahir}</td>
+            <td><span class="status" id="status-${data.nik}">${data.status}</span></td>
+            <td>
+                <button class="edit-btn" onclick="editData('${data.nik}')"><i class="fas fa-edit"></i> Edit</button>
+                <button class="delete-btn" onclick="disableData('${data.nik}')"><i class="fas fa-ban"></i> Nonaktif</button>
+                <button class="activate-btn" onclick="activateData('${data.nik}')"><i class="fas fa-check-circle"></i> Aktifkan</button>
+                <button class="delete-btn" onclick="deleteData('${data.nik}')"><i class="fas fa-trash"></i> Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    }
+
+    updatePagination();
+}
+
+
+    // Fungsi untuk memperbarui tombol pagination
+    function updatePagination() {
+        paginationContainer.innerHTML = ''; // Kosongkan pagination
+
+        const totalPages = Math.ceil(tableData.length / rowsPerPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.className = i === currentPage ? 'active' : '';
+            pageButton.onclick = function () {
+                currentPage = i;
+                displayTableData(currentPage);
+            };
+            paginationContainer.appendChild(pageButton);
+        }
+    }
+
+    // Tampilkan halaman pertama
+    displayTableData(currentPage);
+
+    // Fungsi pencarian
+    document.getElementById('search-input').addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        tableData.forEach((data, index) => {
+            const row = tableBody.rows[index];
+            if (data.nik.toLowerCase().includes(searchValue) || data.nama.toLowerCase().includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+};
+
+// Fungsi untuk mengedit data
+function editData(nik) {
+    window.location.href = `output2.html?nik=${nik}`;
+}
+
+// Fungsi untuk menonaktifkan data
+function disableData(nik) {
+    const confirmNonaktif = confirm(`Apakah Anda yakin ingin menonaktifkan data dengan NIK: ${nik}?`);
+    if (confirmNonaktif) {
+        const statusElement = document.getElementById(`status-${nik}`);
+        statusElement.textContent = "Nonaktif";
+        statusElement.style.color = "#dc3545";
+
+        const activateBtn = document.querySelector(`button[onclick="activateData('${nik}')"]`);
+        const disableBtn = document.querySelector(`button[onclick="disableData('${nik}')"]`);
+        activateBtn.style.display = "inline-block";
+        disableBtn.style.display = "none";
+    }
+}
+
+// Fungsi untuk mengaktifkan data
+function activateData(nik) {
+    const confirmAktif = confirm(`Apakah Anda yakin ingin mengaktifkan data dengan NIK: ${nik}?`);
+    if (confirmAktif) {
+        const statusElement = document.getElementById(`status-${nik}`);
+        statusElement.textContent = "Aktif";
+        statusElement.style.color = "#28a745";
+
+        const activateBtn = document.querySelector(`button[onclick="activateData('${nik}')"]`);
+        const disableBtn = document.querySelector(`button[onclick="disableData('${nik}')"]`);
+        activateBtn.style.display = "none";
+        disableBtn.style.display = "inline-block";
+    }
+}
+function deleteData(nik) {
+    const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data dengan NIK: ${nik}?`);
+
+    if (confirmDelete) {
+        // Cari elemen baris yang sesuai dengan NIK
+        const row = document.querySelector(`#data-table-body tr[data-nik="${nik}"]`);
+
+        if (row) {
+            // Sembunyikan baris dengan mengubah gaya display menjadi none
+            row.style.display = 'none';
+
+            // Tidak menghapus data dari sessionStorage atau tableData array
+            // Data masih ada, hanya baris yang disembunyikan
+        } else {
+            alert(`Baris dengan NIK ${nik} tidak ditemukan.`);
+        }
+    }
+}
+
+
+
+
+
+
+
+    </script>
+
+</body>
+</html>
